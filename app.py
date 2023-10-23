@@ -15,7 +15,7 @@ from sklearn.neighbors import KNeighborsClassifier
 from sklearn.decomposition import PCA
 from sklearn.preprocessing import MinMaxScaler
 import streamlit as st
-
+import subprocess
 import pyaudio
 import wave
 import numpy as np
