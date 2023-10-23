@@ -1,0 +1,12 @@
+pip==23.3.1
+wave
+pyaudio
+streamlit
+scikit-learn
+librosa
+pandas
+matplotlib
+numpy
+scipy
+soundfile
+pickleshare
