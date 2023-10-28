@@ -15,6 +15,8 @@ from sklearn.neighbors import KNeighborsClassifier
 from sklearn.decomposition import PCA
 from sklearn.preprocessing import MinMaxScaler
 import streamlit as st
+import sounddevice as sd
+
 import pyaudio
 import wave
 import numpy as np
@@ -172,60 +174,25 @@ elif selected_option == 'suara':
     if st.button("Mulai Rekaman"):
             st.text("Sedang merekam...")
 
+
+
+
+
             # Mulai merekam audio selama 2 detik ke dalam buffer
-            duration = 3  # Durasi rekaman dalam detik
+            duration = 2  # Durasi rekaman dalam detik
             sample_rate = 44100  # Frekuensi sampel
-            chunk = 1024  # Ukuran chunk untuk pembacaan audio
-            audio_data = []
-
-            p = pyaudio.PyAudio()
-
-            stream = p.open(format=pyaudio.paInt16,
-                            channels=1,
-                            rate=sample_rate,
-                            input=True,
-                            frames_per_buffer=chunk)
-
-            for i in range(0, int(sample_rate / chunk * duration)):
-                audio_chunk = stream.read(chunk)
-                audio_data.append(np.frombuffer(audio_chunk, dtype=np.int16))
-
-            stream.stop_stream()
-            stream.close()
-            p.terminate()
+            audio_data = sd.rec(int(duration * sample_rate),
+                                samplerate=sample_rate, channels=1, dtype='int16')
+            sd.wait()
 
             st.text("Rekaman Selesai")
 
-            # Simpan rekaman ke dalam file WAV
+            # Simpan rekaman ke dalam variabel Python
+            audio_buffer = audio_data.flatten()
+
+            # Simpan rekaman audio sebagai file WAV
             audio_filename = "rekaman_audio.wav"
-            wf = wave.open(audio_filename, 'wb')
-            wf.setnchannels(1)
-            wf.setsampwidth(p.get_sample_size(pyaudio.paInt16))
-            wf.setframerate(sample_rate)
-            wf.writeframes(b''.join(audio_data))
-            wf.close()
-
-
-
-
-    # if st.button("Mulai Rekaman"):
-    #     st.text("Sedang merekam...")
-
-    #     # Mulai merekam audio selama 2 detik ke dalam buffer
-    #     duration = 2  # Durasi rekaman dalam detik
-    #     sample_rate = 44100  # Frekuensi sampel
-    #     audio_data = sd.rec(int(duration * sample_rate),
-    #                         samplerate=sample_rate, channels=1, dtype='int16')
-    #     sd.wait()
-
-    #     st.text("Rekaman Selesai")
-
-    #     # Simpan rekaman ke dalam variabel Python
-    #     audio_buffer = audio_data.flatten()
-
-    #     # Simpan rekaman audio sebagai file WAV
-    #     audio_filename = "rekaman_audio.wav"
-    #     sf.write(audio_filename, audio_buffer, sample_rate)
+            sf.write(audio_filename, audio_buffer, sample_rate)
 
         # Hanya contoh data dummy (harap diganti dengan pengambilan data yang sesungguhnya)
             data_mentah = hitung_statistik(audio_filename)
